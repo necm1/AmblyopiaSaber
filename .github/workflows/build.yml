@@ -37,7 +37,9 @@ jobs:
 
       - name: Create Release Archive
         shell: pwsh
-        run: Compress-Archive -Path publish\* -DestinationPath release\${{ env.VERSION }}.zip
+        run: |
+          New-Item -ItemType Directory -Path release -Force
+          Compress-Archive -Path publish\* -DestinationPath release\${{ env.VERSION }}.zip -Force
 
       - name: Create Github Release
         uses: softprops/action-gh-release@v1
