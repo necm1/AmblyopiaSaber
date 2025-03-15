@@ -27,7 +27,10 @@ jobs:
 
       - name: Read Version from Project File
         id: get_version
-        run: echo "VERSION=$(cat AmblyopiaSaber.csproj | grep '<Version>' | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')" >> $GITHUB_ENV
+        shell: pwsh
+        run: |
+          $version = Select-String -Path AmblyopiaSaber.csproj -Pattern '<Version>(.*?)<\/Version>' | ForEach-Object { $_.Matches.Groups[1].Value }
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Publish Project
         run: dotnet publish --configuration Release --output publish
