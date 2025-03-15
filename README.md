@@ -18,7 +18,7 @@ All credits go to [@legoandmars](https://github.com/legoandmars) for developing 
 This mod requires CustomNotes, which can be easily installed via [Mod Assistant](https://github.com/Assistant/ModAssistant).
 
 ## How to install
-1. Download the ZIP file from the [latest release](https://github.com/legoandmars/AmblyopiaSaber/releases/latest).
+1. Download the ZIP file from the [latest release](https://github.com/necm1/AmblyopiaSaber/releases/latest).
 2. Extract it directly into your **Beat Saber** folder.
     - If you're unsure where your Beat Saber folder is, check the [BSMG wiki](https://bsmg.wiki/pc-modding.html#default-location) for guidance.
 

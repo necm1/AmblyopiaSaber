@@ -14,7 +14,7 @@ jobs:
       - name: Repository Checkout
         uses: actions/checkout@v3
 
-      - name: .NET SDK einrichten
+      - name: Configure .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
