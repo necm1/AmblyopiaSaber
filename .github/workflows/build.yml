@@ -36,9 +36,8 @@ jobs:
         run: dotnet publish --configuration Release --output publish
 
       - name: Create Release Archive
-        run: |
-          mkdir release
-          zip -r release/${{ env.VERSION }}.zip publish/*
+        shell: pwsh
+        run: Compress-Archive -Path publish\* -DestinationPath release\${{ env.VERSION }}.zip
 
       - name: Create Github Release
         uses: softprops/action-gh-release@v1
