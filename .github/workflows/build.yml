@@ -1,56 +1,49 @@
-name: Build and Release
+name: Build and Release .NET App
 
 on:
   push:
-    tags:
-      - 'v*'  # Löst den Workflow nur bei Tags aus, die mit "v" beginnen (z.B. v1.0.0)
+    branches:
+      - main  # Nur wenn etwas in "main" gemerged wird
 
 jobs:
   build:
+    name: Build and Release
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Repository Ceckout
+        uses: actions/checkout@v3
 
-      - name: Set up .NET
+      - name: .NET SDK Bld
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.0'  # Stelle sicher, dass du die richtige Version nutzt
+          dotnet-version: 8.0.x
 
-      - name: Restore dependencies
+      - name: Restore Dpendencies
         run: dotnet restore
 
-      - name: Build the project
+      - name: Build Project
         run: dotnet build --configuration Release --no-restore
 
-      - name: Publish the project
-        run: dotnet publish --configuration Release --output out
+      - name: Read Version from Project File
+        id: get_version
+        run: echo "VERSION=$(cat YourProject.csproj | grep '<Version>' | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')" >> $GITHUB_ENV
 
-      - name: Create ZIP file
+      - name: Publish Project
+        run: dotnet publish --configuration Release --output publish
+
+      - name: Create Release Archive
         run: |
           mkdir release
-          zip -r release/AmblyopiaSaber-${{ github.ref_name }}.zip out/
+          zip -r release/${{ env.VERSION }}.zip publish/*
 
-      - name: Upload ZIP as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: AmblyopiaSaber-${{ github.ref_name }}
-          path: release/AmblyopiaSaber-${{ github.ref_name }}.zip
-
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Download built artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: AmblyopiaSaber-${{ github.ref_name }}
-
-      - name: Create GitHub Release
+      - name: Create Github Release
         uses: softprops/action-gh-release@v1
         with:
-          files: AmblyopiaSaber-${{ github.ref_name }}.zip
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: release/${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
