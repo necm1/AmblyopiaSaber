@@ -3,7 +3,7 @@ name: Build and Release .NET App
 on:
   push:
     branches:
-      - main  # Nur wenn etwas in "main" gemerged wird
+      - main
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
       - name: Repository Checkout
         uses: actions/checkout@v3
 
-      - name: .NET SDK Bld
+      - name: Install .NET SDK
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
@@ -23,7 +23,7 @@ jobs:
         run: dotnet restore
 
       - name: Build Project
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
 
       - name: Read Version from Project File
         id: get_version
@@ -32,22 +32,25 @@ jobs:
           $version = Select-String -Path AmblyopiaSaber.csproj -Pattern '<Version>(.*?)<\/Version>' | ForEach-Object { $_.Matches.Groups[1].Value }
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Publish Project
-        run: dotnet publish --configuration Release --output publish
+      - name: Debug: Check Build Output
+        shell: pwsh
+        run: |
+          Write-Host "🔍 Checking built files..."
+          Get-ChildItem -Path bin/Release -Recurse
 
       - name: Create Release Archive
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path release -Force
-          Compress-Archive -Path publish\* -DestinationPath release\${{ env.VERSION }}.zip -Force
+          Compress-Archive -Path bin/Release/Final/Plugins/* -DestinationPath release/AmblyopiaSaber-${{ env.VERSION }}.zip -Force
 
-      - name: Create Github Release
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ env.VERSION }}
           name: Release v${{ env.VERSION }}
           draft: false
           prerelease: false
-          files: release/${{ env.VERSION }}.zip
+          files: release/AmblyopiaSaber-${{ env.VERSION }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
