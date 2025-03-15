@@ -22,9 +22,6 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore
 
-      - name: Check files in working directory
-        run: ls -R
-
       - name: Build Project
         run: dotnet build --configuration Release --no-restore
 
