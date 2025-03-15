@@ -32,7 +32,7 @@ jobs:
           $version = Select-String -Path AmblyopiaSaber.csproj -Pattern '<Version>(.*?)<\/Version>' | ForEach-Object { $_.Matches.Groups[1].Value }
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append
 
-      - name: Debug: Check Build Output
+      - name: Debug Check Build Output
         shell: pwsh
         run: |
           Write-Host "🔍 Checking built files..."
