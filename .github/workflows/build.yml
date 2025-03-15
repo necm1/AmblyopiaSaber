@@ -19,10 +19,10 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restore Dpendencies
+      - name: Restore Dependencies
         run: dotnet restore
 
-      - name: Build Project
+      - name: Build Projects
         run: dotnet build --configuration Release --no-restore
 
       - name: Read Version from Project File
