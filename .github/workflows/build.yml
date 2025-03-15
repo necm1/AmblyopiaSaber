@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Repository Ceckout
+      - name: Repository Checkout
         uses: actions/checkout@v3
 
       - name: .NET SDK Bld
@@ -22,12 +22,15 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore
 
-      - name: Build Projects
+      - name: Check files in working directory
+        run: ls -R
+
+      - name: Build Project
         run: dotnet build --configuration Release --no-restore
 
       - name: Read Version from Project File
         id: get_version
-        run: echo "VERSION=$(cat YourProject.csproj | grep '<Version>' | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')" >> $GITHUB_ENV
+        run: echo "VERSION=$(cat AmblyopiaSaber.csproj | grep '<Version>' | sed -E 's/.*<Version>(.*)<\/Version>.*/\1/')" >> $GITHUB_ENV
 
       - name: Publish Project
         run: dotnet publish --configuration Release --output publish
